@@ -1,0 +1,4 @@
+ignore:
+  - internal/cmd  # Literally just CLI definition
+  - cmd/gatekeeper  # Just main, dispatches straight to the CLI
+  - cmd/lambda/main.go  # Lambda setup and lambda.Start call
