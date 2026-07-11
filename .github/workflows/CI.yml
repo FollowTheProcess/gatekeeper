@@ -19,6 +19,4 @@ jobs:
       contents: read
     uses: FollowTheProcess/ci/.github/workflows/Go.yml@v4
     with:
-      matrix-os: '["ubuntu-latest"]'
-      codecov: false
       env: '{"GOEXPERIMENT": "jsonv2"}'  # In here for go.followtheprocess.codes/problem

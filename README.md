@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/github/license/FollowTheProcess/gatekeeper)](https://github.com/FollowTheProcess/gatekeeper)
 [![GitHub](https://img.shields.io/github/v/release/FollowTheProcess/gatekeeper?logo=github&sort=semver)](https://github.com/FollowTheProcess/gatekeeper)
 [![CI](https://github.com/FollowTheProcess/gatekeeper/workflows/CI/badge.svg)](https://github.com/FollowTheProcess/gatekeeper/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/FollowTheProcess/gatekeeper/branch/main/graph/badge.svg)](https://codecov.io/gh/FollowTheProcess/gatekeeper)
 
 A custom CI -> AWS auth mechanism powering my personal software catalog 🗄️
 
