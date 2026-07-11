@@ -86,11 +86,11 @@ func (h Handler) Handle(
 
 	// An inline session policy narrowing the (already tight) IAM role policy
 	// from PutObject on the entire bucket, to PutObject on specifically this
-	// project and this version (from the token claims)
+	// project and this version with expiry also based on the token (from the token claims)
 	//
 	// So now all an assumer of this role can do is PutObject to
-	// `{bucket}/project/version/*` for up to the (low) max duration. Nice and secure!
-	policy, err := aws.InlineUploadPolicy(h.env.ReleaseBucketName, token.Project, token.Version)
+	// `{bucket}/project/version/*` for as long as the token is valid. Basically OIDC!
+	policy, err := aws.InlineUploadPolicy(h.env.ReleaseBucketName, token.Project, token.Version, token.Expires)
 	if err != nil {
 		return h.Error(http.StatusInternalServerError, fmt.Errorf("marshal inline policy: %w", err))
 	}

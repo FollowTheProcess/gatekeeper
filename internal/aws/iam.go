@@ -3,11 +3,13 @@ package aws
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // InlineUploadPolicy creates a scoped inline role policy JSON for a particular
-// bucket, project and version.
-func InlineUploadPolicy(bucket, project, version string) (string, error) {
+// bucket, project and version that is bounded by exp via a "DateLessThan" condition
+// so the inline credentials expire when the JWT does.
+func InlineUploadPolicy(bucket, project, version string, exp time.Time) (string, error) {
 	doc := policyDocument{
 		Version: "2012-10-17",
 		Statement: []statement{
@@ -19,6 +21,11 @@ func InlineUploadPolicy(bucket, project, version string) (string, error) {
 				},
 				Resource: []string{
 					fmt.Sprintf("arn:aws:s3:::%s/%s/%s/*", bucket, project, version),
+				},
+				Condition: condition{
+					DateLessThan: map[string]string{
+						"aws:CurrentTime": exp.UTC().Format(time.RFC3339),
+					},
 				},
 			},
 		},
@@ -38,7 +45,12 @@ type policyDocument struct {
 }
 
 type statement struct {
-	Effect   string   `json:"Effect"`
-	Action   []string `json:"Action"`
-	Resource []string `json:"Resource"`
+	Effect    string    `json:"Effect"`
+	Condition condition `json:"Condition"`
+	Action    []string  `json:"Action"`
+	Resource  []string  `json:"Resource"`
+}
+
+type condition struct {
+	DateLessThan map[string]string `json:"DateLessThan"`
 }

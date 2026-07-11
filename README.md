@@ -53,7 +53,7 @@ cask "gowc" do
 # Rest of the cask definition...
 ```
 
-Why do I do this? Mostly because I think it's cool, but also partially because it reduces lock-in and decouples my releases and installs from e.g. Github releases.
+Why do I do this? Mostly because I think it's cool, but also because it reduces lock-in and decouples my releases and installs from e.g. Github releases.
 
 Okay, now on to `gatekeeper`...
 
@@ -63,33 +63,40 @@ This is all powered by AWS S3 and a CloudFront distribution serving it. When I r
 > [GoReleaser] takes care of almost all of this btw, all I do is own the S3 bucket and CloudFront distribution
 
 And of course, I like to do this with CI/CD. On Github, I can use Github Actions and authenticate to AWS with [OIDC],
-assume an IAM Role with `s3:PutObject` and we're done 👌🏻
+assume an IAM Role with `s3:PutObject` for a limited time and we're done 👌🏻
 
 But OIDC yet again ties me into an OIDC-capable place to store my code (Github, Gitlab etc.) If I wanted to move my code to e.g. [tangled] or [codeberg], I couldn't
 use this same process to release, not fun!
 
-Enter `gatekeeper`, it _replaces_ OIDC for this use case. Allowing any CI system to authenticate itself, then assume a tightly scoped IAM Role allowing it to upload releases.
+Enter `gatekeeper`, it _replaces_ OIDC for this use case. Allowing any CI system to authenticate itself using public/private key pairs, then assume a tightly scoped, time bounded
+IAM Role allowing it to upload releases.
+
+It's actually even better in some ways! A normal IAM role assumable via OIDC doesn't know where it's going to be assumed from so you have to add a list of approved repos, branches etc. and
+it has no knowledge of _which_ file it will be asked to upload so must grant `s3:PutObject` on the whole bucket.
+
+In `gatekeeper`, I know (via the JWT claims) which project and version I'm uploading so can grant `s3:PutObject` _only_ to `{bucket}/{project}/{version}*` so it's _not possible_ for it
+to affect anything else in the bucket. 🔒
 
 ## How it works
 
 `gatekeeper` is actually 2 separate systems:
 
 - A CLI run in the CI system (or locally)
-- A Lambda Function behind a function URL acting as the auth server
+- A Lambda Function behind a function URL acting as the "auth" server
 
 The flow goes something like this:
 
 1. Generate a public/private key pair with `gatekeeper keys`
-2. The private key is stored as a repository secret in the git provider (most of them support this it seems)
-3. The public key is stored in an SSM parameter scoped to the project
+2. The private key is stored as a repository secret in the git provider (most of them support this it seems) and exposed as `GATEKEEPER_PRIVATE_KEY`
+3. The public key is stored in an SSM parameter scoped to the project (`/releases/{project}/public-key`)
 4. When it comes time to release, the CLI is used to request temporary release credentials `gatekeeper auth {project} {version}`
 5. The CLI mints and signs (using the private key) a JWT and sends it off to the Lambda. The claims encode project, version etc.
-6. The Lambda checks the JWT is valid with the public key and validates the claims
+6. The Lambda checks the JWT with the public key and validates the claims just as a traditional auth backend would
 7. If the request is authenticated, the Lambda assumes a tightly scoped, time-bounded IAM Role with `s3:PutObject` narrowed to the project and version
 8. The Lambda responds with the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN` values for this session
 9. The CLI prints the `export ...` statements so `eval "$(gatekeeper auth project version)"` sources the env vars
 10. Run whatever command you need with access to this role (such as `goreleaser release`)
-11. The session expires after a short time so no long lived credentials
+11. The session expires when the JWT does up to a hardcoded maximum of 30 minutes
 
 [homebrew]: https://brew.sh
 [OIDC]: https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-aws

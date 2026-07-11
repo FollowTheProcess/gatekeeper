@@ -25,7 +25,7 @@ var (
 const (
 	// MaxTokenDuration is the maximum amount of time we expect a token to be valid for, i.e.
 	// the maximum allowable difference between the 'iat' and 'exp' claims.
-	MaxTokenDuration = 15 * time.Minute
+	MaxTokenDuration = 30 * time.Minute
 
 	// Audience is the intended audience for all internally minted tokens.
 	Audience = "get.followtheprocess.codes"
