@@ -1,0 +1,18 @@
+framework:
+  - all
+download-external-modules: true
+skip-check:
+  - CKV_AWS_338  # Ensure CloudWatch retains logs for 1 year. Too expensive and not necessary
+  - CKV_AWS_144  # Ensure that S3 buckets have cross-region replication enabled
+  - CKV_AWS_158  # Ensure CloudWatch log groups are encrypted with KMS. Not really necessary
+  - CKV2_AWS_62  # Ensure S3 buckets have event notifications enabled
+  - CKV_AWS_116  # Ensure that AWS Lambda function is configured for a Dead Letter Queue
+  - CKV_AWS_173  # Encrypt Lambda env vars with a KMS CMK. AWS-managed key already encrypts at rest; a CMK is ~$1/mo for no real gain here
+  - CKV_AWS_28   # DynamoDB point-in-time recovery. NonceTable is ephemeral (TTL'd, regenerable), nothing to recover
+  - CKV_AWS_119  # DynamoDB KMS CMK. Table already has SSE with the AWS-managed key; a CMK is ~$1/mo for no real gain here
+  - CKV_DOCKER_7 # Non-latest base image tag. distroless/static is digest-pinned in practice and not the Lambda artifact
+  - CKV_DOCKER_2 # HEALTHCHECK instruction. Meaningless for a distroless CLI/release binary, not a long-running service
+  - CKV_DOCKER_3 # Non-root container user. Not the Lambda runtime; fixable via the :nonroot tag if we ever care
+  - CKV_AWS_117  # Lambda in VPC. Doesn't restrict inbound (Function URL bypasses the VPC); egress is
+                 # already locked down by the IAM role. A VPC would need paid interface endpoints for
+                 # STS/X-Ray (~$7-15/mo) for zero real security gain

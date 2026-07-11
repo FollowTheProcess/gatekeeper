@@ -1,0 +1,19 @@
+version = 0.1
+
+[default]
+[default.global]
+[default.global.parameters]
+stack_name = "gatekeeper"
+
+[default.deploy.parameters]
+region = "eu-west-2"
+stack_name = "gatekeeper"
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+s3_prefix = "projects/gatekeeper/sam"
+tags = "project=gatekeeper repo=https://github.com/FollowTheProcess/gatekeeper managed-by=SAM"
+on_failure = "DELETE"
+confirm_changeset = true
+
+[default.build.parameters]
+cached = true
+parallel = true

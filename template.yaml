@@ -1,0 +1,155 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A custom CI -> AWS auth mechanism powering my personal software catalog
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  ReleaseUploadRoleName:
+    Description: The name of the releases upload role
+    Type: String
+    Default: gatekeeper-release-role
+
+  WorkloadPermissionsBoundaryARN:
+    Description: The ARN of the workload permissions boundary needed to deploy
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /core/iam/workloads/permissions-boundary/arn
+
+  ReleaseBucketName:
+    Description: The name of the release bucket
+    Type: String
+    Default: get.followtheprocess.codes
+
+  LogLevel:
+    Description: Log level for the app and Lambda platform
+    Type: String
+    Default: INFO
+    AllowedValues: ["DEBUG", "INFO", "WARN", "ERROR"]
+
+Globals:
+  Function:
+    Timeout: 10
+    Tracing: Active
+    MemorySize: 512
+    AutoPublishAlias: LATEST
+    ReservedConcurrentExecutions: 1  # Hard concurrency cap
+    PropagateTags: true
+    LoggingConfig:
+      LogFormat: JSON
+      ApplicationLogLevel: !Ref LogLevel
+      SystemLogLevel: INFO  # Only supports DEBUG, INFO or WARN
+    Environment:
+      Variables:
+        LOG_LEVEL: !Ref LogLevel
+
+Resources:
+  Function:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Handler: gatekeeper
+      CodeUri: cmd/lambda
+      Runtime: provided.al2023
+      Architectures:
+        - arm64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:901920570463:layer:aws-otel-collector-arm64-ver-0-117-0:1
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NONCE_TABLE_NAME: !Ref NonceTable
+          RELEASE_BUCKET_NAME: !Ref ReleaseBucketName
+          RELEASE_UPLOAD_ROLE_ARN: !Sub arn:aws:iam::${AWS::AccountId}:role/${ReleaseUploadRoleName}
+
+  NonceTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: jti
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jti
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  FunctionLogGroup:
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Function}
+      RetentionInDays: 30
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      # Must be named so it can AssumeRole on the gatekeeper release role
+      RoleName: gatekeeper-lambda-execution-role
+      Description: Role assumed by the gatekeeper Lambda function
+      Path: /workloads/
+      PermissionsBoundary: !Ref WorkloadPermissionsBoundaryARN
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+      Policies:
+        - PolicyName: LambdaLogPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogStreams
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/gatekeeper*
+
+        - PolicyName: AllowAssumeReleaseUploadRole
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sts:AssumeRole
+                  - sts:TagSession
+                  - sts:SetSourceIdentity
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/${ReleaseUploadRoleName}
+
+        - PolicyName: AllowPutNonce
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                Resource: !GetAtt NonceTable.Arn
+
+        - PolicyName: AllowFetchPublicKeyFromSSM
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/releases/*
+
+Outputs:
+  FunctionUrl:
+    Description: Public HTTPS endpoint for the gatekeeper function
+    Value: !GetAtt FunctionUrl.FunctionUrl

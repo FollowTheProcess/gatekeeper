@@ -1,0 +1,117 @@
+version: 2
+
+project_name: gatekeeper
+
+before:
+  hooks:
+    - go mod tidy
+
+gomod:
+  proxy: true
+
+report_sizes: true
+
+builds:
+  - main: "./cmd/gatekeeper"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X go.followtheprocess.codes/gatekeeper/internal/cmd.version={{ .Version }}
+      - -X go.followtheprocess.codes/gatekeeper/internal/cmd.commit={{ .Commit }}
+      - -X go.followtheprocess.codes/gatekeeper/internal/cmd.date={{ .CommitDate }}
+    env:
+      - CGO_ENABLED=0
+      - GOEXPERIMENT=jsonv2
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+      - openbsd
+      - netbsd
+    goarch:
+      - amd64
+      - arm64
+      - "386"
+      - arm
+    goarm:
+      - "7"
+
+blobs:
+  - provider: s3
+    region: eu-west-2
+    bucket: get.followtheprocess.codes
+    directory: "{{ .ProjectName }}/v{{ .Version }}"
+
+homebrew_casks:
+  - name: gatekeeper
+    binaries:
+      - gatekeeper
+    url:
+      template: "https://get.followtheprocess.codes/{{ .ProjectName }}/v{{ .Version }}/{{ .ArtifactName }}"
+      verified: github.com/FollowTheProcess/{{ .ProjectName }}
+    directory: Casks
+    description: A custom CI -> AWS auth mechanism enabling OIDC-like flows on non-OIDC enabled CI systems
+    homepage: https://github.com/FollowTheProcess/gatekeeper
+    commit_author:
+      name: Tom Fleet
+      email: me@followtheprocess.codes
+    repository:
+      owner: FollowTheProcess
+      name: homebrew-tap
+      token: "{{.Env.HOMEBREW_TAP_TOKEN}}"
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status.zero?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gatekeeper"]
+          end
+
+dockers_v2:
+  - images:
+      - followtheprocess/gatekeeper
+      - ghcr.io/followtheprocess/gatekeeper
+    tags:
+      - "{{ .Version }}"
+    labels:
+      "org.opencontainers.image.description": "A custom CI -> AWS auth mechanism enabling OIDC-like flows on non-OIDC enabled CI systems"
+      "org.opencontainers.image.created": "{{.CommitDate}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+
+docker_digest:
+  name_template: digests.txt
+
+archives:
+  - name_template: >-
+      {{ .ProjectName }}-
+      {{- .Version }}-
+      {{- .Os }}-
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+
+sboms:
+  - artifacts: archive
+    documents:
+      - >-
+        {{ .ProjectName }}-
+        {{- .Version }}-
+        {{- .Os }}-
+        {{- if eq .Arch "amd64" }}x86_64
+        {{- else if eq .Arch "386" }}i386
+        {{- else }}{{ .Arch }}{{ end }}.sbom
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ .Tag }}-dev{{ .ShortCommit }}"
+
+changelog:
+  # The changelog is handled by release drafter
+  disable: true

@@ -1,0 +1,15 @@
+# Changes here will be overwritten by Copier
+_commit: v0.55.2
+_src_path: gh:FollowTheProcess/go-template
+author_email: me@followtheprocess.codes
+author_name: Tom Fleet
+dependency_bot: renovate
+description: A custom CI -> AWS auth mechanism enabling OIDC-like flows on non-OIDC
+    enabled CI systems
+github_url: https://github.com/FollowTheProcess/gatekeeper
+github_username: FollowTheProcess
+license: MIT
+module_path: go.followtheprocess.codes/gatekeeper
+project_name: Gatekeeper
+project_slug: gatekeeper
+project_type: binary

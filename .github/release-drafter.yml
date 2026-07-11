@@ -1,0 +1,55 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+
+categories:
+  - title: ":boom: Breaking Changes"
+    when:
+      label: breaking
+
+  - title: ":rocket: Features"
+    when:
+      labels:
+        - enhancement
+        - feature
+
+  - title: ":fire: Removals and Deprecations"
+    when:
+      label: removal
+
+  - title: ":beetle: Fixes"
+    when:
+      label: bug
+
+  - title: ":racehorse: Performance"
+    when:
+      label: performance
+
+  - title: ":rotating_light: Testing"
+    when:
+      label: testing
+
+  - title: ":construction_worker: Continuous Integration"
+    when:
+      label: ci
+
+  - title: ":books: Documentation"
+    when:
+      label: documentation
+
+  - title: ":hammer: Refactoring"
+    when:
+      label: refactoring
+
+  - title: ":lipstick: Style"
+    when:
+      label: style
+
+  - title: ":package: Dependencies"
+    when:
+      labels:
+        - dependencies
+        - build
+
+template: |-
+  ## Changes
+  $CHANGES
