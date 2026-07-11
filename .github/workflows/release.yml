@@ -87,6 +87,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
 
       - name: Generate Binary Attestation
         uses: actions/attest-build-provenance@v4

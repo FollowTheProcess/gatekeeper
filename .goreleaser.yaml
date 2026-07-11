@@ -41,7 +41,7 @@ builds:
 
 blobs:
   - provider: s3
-    region: eu-west-2
+    region: "{{.Env.AWS_REGION}}"
     bucket: get.followtheprocess.codes
     directory: "{{ .ProjectName }}/v{{ .Version }}"
 
