@@ -60,7 +60,7 @@ Resources:
         Variables:
           NONCE_TABLE_NAME: !Ref NonceTable
           RELEASE_BUCKET_NAME: !Ref ReleaseBucketName
-          RELEASE_UPLOAD_ROLE_ARN: !Sub arn:aws:iam::${AWS::AccountId}:role/${ReleaseUploadRoleName}
+          RELEASE_UPLOAD_ROLE_ARN: !Sub arn:aws:iam::${AWS::AccountId}:role/workloads/${ReleaseUploadRoleName}
 
   NonceTable:
     Type: AWS::DynamoDB::Table
@@ -129,7 +129,7 @@ Resources:
                   - sts:AssumeRole
                   - sts:TagSession
                   - sts:SetSourceIdentity
-                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/${ReleaseUploadRoleName}
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/workloads/${ReleaseUploadRoleName}
 
         - PolicyName: AllowPutNonce
           PolicyDocument:
