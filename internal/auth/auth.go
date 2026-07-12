@@ -70,7 +70,10 @@ func ParseFromHeaders(ctx context.Context, headers map[string]string, fetcher Fe
 
 			break
 		}
+	}
 
+	// Looped through all the headers and didn't find it
+	if auth == "" {
 		return Token{}, errors.New("missing 'Authorization' header")
 	}
 

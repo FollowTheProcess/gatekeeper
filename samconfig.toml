@@ -15,5 +15,5 @@ on_failure = "DELETE"
 confirm_changeset = true
 
 [default.build.parameters]
-cached = true
+cached = false   # Flaky when the entire code is not under lambda/**/*.go
 parallel = true

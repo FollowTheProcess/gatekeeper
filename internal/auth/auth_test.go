@@ -106,7 +106,9 @@ func TestParseFromHeader(t *testing.T) {
 			test.Ok(t, err)
 
 			headers := map[string]string{
-				"Authorization": fmt.Sprintf("Bearer %s", signed),
+				"Authorization":  fmt.Sprintf("Bearer %s", signed),
+				"Content-Type":   "application/json",
+				"Something-Else": "yes",
 			}
 
 			// The Fetcher contract returns raw PEM bytes, so encode the public key
