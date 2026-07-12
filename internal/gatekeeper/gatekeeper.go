@@ -64,6 +64,8 @@ type KeysOptions struct {
 	Debug bool   // Enable debug logging
 }
 
+// TODO: Add a --upload option that creates the SSM param
+
 // Keys handles the keys subcommand.
 func (g Gatekeeper) Keys(ctx context.Context, options KeysOptions) error {
 	start := time.Now()

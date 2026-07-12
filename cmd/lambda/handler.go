@@ -22,8 +22,6 @@ import (
 // TODO: Add an S3Client and ListObjects so we can check if the release already exists
 // If so return a 409 Problem JSON
 
-// TODO: Cache SSM params, maybe with the lambda extension or something?
-
 var errReplayCheckFailed = errors.New("token failed replay check")
 
 // Handler is the lambda function handler.
@@ -79,10 +77,6 @@ func (h Handler) Handle(
 		slog.Time("issued", token.IssuedAt),
 		slog.Time("expires", token.Expires),
 	)
-
-	// TODO: I want to make sure it can't overwrite an existing version
-	// maybe object lock at some point in the future once it's all stable
-	// and works
 
 	// An inline session policy narrowing the (already tight) IAM role policy
 	// from PutObject on the entire bucket, to PutObject on specifically this
