@@ -3,10 +3,6 @@
   "extends": ["config:recommended"],
   "labels": ["dependencies"],
   "postUpdateOptions": ["gomodTidy"],
-  "postUpgradeTasks": {
-    "commands": ["nix-update --flake --version=skip default"],
-    "fileFilters": ["flake.nix"]
-  },
   "nix": {
     "enabled": true
   }
