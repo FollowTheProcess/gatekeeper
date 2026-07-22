@@ -50,6 +50,10 @@
 # Docker
 !/Dockerfile
 
+# Nix
+!/flake.nix
+!/flake.lock
+
 # Other
 !/.typos.toml
 !/.copier-answers.yml

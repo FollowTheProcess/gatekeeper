@@ -4,8 +4,7 @@ _src_path: gh:FollowTheProcess/go-template
 author_email: me@followtheprocess.codes
 author_name: Tom Fleet
 dependency_bot: renovate
-description: A custom CI -> AWS auth mechanism enabling OIDC-like flows on non-OIDC
-    enabled CI systems
+description: A custom CI -> AWS auth mechanism enabling OIDC-like flows on non-OIDC enabled CI systems
 github_url: https://github.com/FollowTheProcess/gatekeeper
 github_username: FollowTheProcess
 license: MIT
