@@ -20,3 +20,28 @@ jobs:
     uses: FollowTheProcess/ci/.github/workflows/Go.yml@v4
     with:
       env: '{"GOEXPERIMENT": "jsonv2"}'  # In here for go.followtheprocess.codes/problem
+
+  nix:
+    name: Nix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Set up Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ github.token }}
+
+      - name: Flake Check
+        run: nix flake check
+
+      - name: Flake Build
+        run: nix flake build

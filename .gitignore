@@ -53,6 +53,7 @@
 # Nix
 !/flake.nix
 !/flake.lock
+!/.envrc
 
 # Other
 !/.typos.toml
