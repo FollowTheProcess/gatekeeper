@@ -44,4 +44,4 @@ jobs:
         run: nix flake check
 
       - name: Flake Build
-        run: nix flake build
+        run: nix build
