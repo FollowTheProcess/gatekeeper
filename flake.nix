@@ -69,7 +69,7 @@
             pname = "gatekeeper";
             inherit version;
             src = ./.;
-            vendorHash = "sha256-clSk4TG3KsMO27Ej1LgrYD25viCaE5bw+FLQ9w5K3mQ=";
+            vendorHash = "sha256-lU02vvD0IHfpZly5f0/gA3qewC7RaDQYSng/KzNQPuw=";
             ldflags = [
               "-s"
               "-w"
@@ -101,6 +101,7 @@
               gopls
               goreleaser
               mise
+              nix-update
               typos
             ];
             shellHook = ''
