@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "labels": ["dependencies"],
-  "postUpdateOptions": ["gomodTidy"]
+  "postUpdateOptions": ["gomodTidy"],
+  "postUpgradeTasks": {
+    "commands": ["nix-update --flake --version=skip default"],
+    "fileFilters": ["flake.nix"]
+  },
+  "nix": {
+    "enabled": true
+  }
 }
