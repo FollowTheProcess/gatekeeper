@@ -51,8 +51,8 @@ jobs:
           purge-created: 0
           purge-primary-key: never
 
+      - name: Check Flake Inputs
+        uses: DeterminateSystems/flake-checker-action@v13
+
       - name: Flake Check
         run: nix flake check
-
-      - name: Flake Build
-        run: nix build
