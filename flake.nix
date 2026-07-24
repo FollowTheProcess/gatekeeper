@@ -69,7 +69,7 @@
             pname = "gatekeeper";
             inherit version;
             src = ./.;
-            vendorHash = "sha256-lU02vvD0IHfpZly5f0/gA3qewC7RaDQYSng/KzNQPuw=";
+            vendorHash = "sha256-nX/SsLYSXHe612rGrX9Wf1aUI3m+t2HBa+0jntX4t9A=";
             ldflags = [
               "-s"
               "-w"
@@ -96,14 +96,19 @@
           devShells.default = pkgs.mkShell {
             packages = with pkgs; [
               aws-sam-cli
+              # checkov
               go
               golangci-lint
               gopls
               goreleaser
               mise
               nix-update
+              trivy
               typos
             ];
+
+            GOEXPERIMENT = "jsonv2";
+
             shellHook = ''
               echo "👋 Welcome to the gatekeeper devShell!"
             '';

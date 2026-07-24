@@ -2,16 +2,6 @@
 # Extra args after `--` are appended to the task's command:
 #   mise run test -- -run TestFoo
 #   mise run bench -- -benchtime 5s
-
-[tools]
-typos = "latest"
-golangci-lint = "latest"
-goreleaser = "latest"
-checkov = "latest"
-
-[env]
-GOEXPERIMENT = "jsonv2"
-
 [vars]
 COV_DATA = "coverage.out"
 
