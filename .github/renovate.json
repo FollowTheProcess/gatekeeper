@@ -4,6 +4,9 @@
   "labels": ["dependencies"],
   "postUpdateOptions": ["gomodTidy"],
   "nix": {
-    "enabled": true
+    "enabled": true,
+    "lockFileMaintenance": {
+      "enabled": true
+    }
   }
 }
