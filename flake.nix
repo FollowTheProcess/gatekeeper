@@ -69,7 +69,7 @@
             pname = "gatekeeper";
             inherit version;
             src = ./.;
-            vendorHash = "sha256-nX/SsLYSXHe612rGrX9Wf1aUI3m+t2HBa+0jntX4t9A=";
+            vendorHash = "sha256-FZtnUmBT6qvljFLLDMQiMQWojTSjiwZTB6rh6M09BaE=";
             ldflags = [
               "-s"
               "-w"
