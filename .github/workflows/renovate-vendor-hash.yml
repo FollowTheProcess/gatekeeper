@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: read
     timeout-minutes: 5
     defaults:
       run:
@@ -34,8 +33,16 @@ jobs:
         run: nix run nixpkgs#nix-update -- --flake --version=skip default
 
       - name: Commit Updated Flake
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # Using the API here because GitHub will sign the commit
         run: |-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore: update vendorHash" || echo "No change to vendorHash"
-          git push
+          if git diff --quiet flake.nix; then
+            echo "No change to vendorHash"
+            exit 0
+          fi
+          gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/flake.nix" \
+            -f message="chore: update vendorHash" \
+            -f content="$(base64 -w0 flake.nix)" \
+            -f sha="$(git rev-parse HEAD:flake.nix)" \
+            -f branch="$GITHUB_HEAD_REF"
