@@ -45,6 +45,4 @@ jobs:
             -f message="chore: update vendorHash" \
             -f content="$(base64 -w0 flake.nix)" \
             -f sha="$(git rev-parse HEAD:flake.nix)" \
-            -f branch="$GITHUB_HEAD_REF" \
-            -f "author[name]=renovate[bot]" \
-            -f "author[email]=29139614+renovate[bot]@users.noreply.github.com"
+            -f branch="$GITHUB_HEAD_REF"
