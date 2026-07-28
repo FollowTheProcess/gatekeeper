@@ -1,0 +1,48 @@
+name: Post Renovate
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  update-vendor-hash:
+    if: startsWith(github.head_ref, 'renovate/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ github.token }}
+
+      - name: Set up Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ github.token }}
+
+      - name: Update Vendor Hash
+        run: nix run nixpkgs#nix-update -- --flake --version=skip default
+
+      - name: Commit Updated Flake
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # Using the API here because GitHub will sign the commit
+        run: |-
+          if git diff --quiet flake.nix; then
+            echo "No change to vendorHash"
+            exit 0
+          fi
+          gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/flake.nix" \
+            -f message="chore: update vendorHash" \
+            -f content="$(base64 -w0 flake.nix)" \
+            -f sha="$(git rev-parse HEAD:flake.nix)" \
+            -f branch="$GITHUB_HEAD_REF"

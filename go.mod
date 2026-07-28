@@ -5,8 +5,8 @@ go 1.26
 require (
 	github.com/aws/aws-lambda-go v1.54.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.31
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.20.53
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.61.0
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.20.54
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.62.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.73.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.45.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
