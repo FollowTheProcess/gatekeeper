@@ -51,6 +51,7 @@
 !/Dockerfile
 
 # Nix
+!*.nix
 !/flake.nix
 !/flake.lock
 !/.envrc

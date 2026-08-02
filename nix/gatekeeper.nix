@@ -1,0 +1,51 @@
+{ inputs, ... }:
+let
+  version = "0.1.0";
+  rev = inputs.self.rev or inputs.self.dirtyRev or "unknown";
+in
+{
+  perSystem =
+    {
+      pkgs,
+      lib,
+      self',
+      ...
+    }:
+    {
+      packages.default = pkgs.buildGoModule {
+        meta = {
+          description = "A custom CI -> AWS auth mechanism powering my personal software catalog";
+          homepage = "https://github.com/FollowTheProcess/gatekeeper";
+          license = lib.licenses.mit;
+          platforms = lib.platforms.unix;
+          mainProgram = "gatekeeper";
+        };
+
+        pname = "gatekeeper";
+        inherit version;
+        src = lib.sources.cleanSource inputs.self;
+        vendorHash = "sha256-I9XEsPBRRjEbpxYmnW+puoMkj41cuwwYjeIfTItY/F4=";
+        ldflags = [
+          "-s"
+          "-w"
+          "-X go.followtheprocess.codes/gatekeeper/internal/cmd.version=${version}"
+          "-X go.followtheprocess.codes/gatekeeper/internal/cmd.commit=${rev}"
+          "-X go.followtheprocess.codes/gatekeeper/internal/cmd.date=${inputs.self.lastModifiedDate}"
+        ];
+        subPackages = [ "cmd/gatekeeper" ];
+
+        env = {
+          CGO_ENABLED = 0;
+          GOEXPERIMENT = "jsonv2";
+        };
+
+        checkPhase = ''
+          runHook preCheck
+          CGO_ENABLED=1 go test -race ./...
+          runHook postCheck
+        '';
+      };
+
+      checks.gatekeeper = self'.packages.default;
+    };
+}
