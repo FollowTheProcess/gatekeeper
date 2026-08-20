@@ -84,4 +84,8 @@ run = "fd . -e go | xargs wc -l | sort -nr | head"
 
 [tasks.update]
 description = "Updates dependencies in go.mod and go.sum"
-run = ["go get -u ./...", "go mod tidy"]
+run = [
+  "go get -u ./...",
+  "go mod tidy",
+  "nix-update --flake default --version=skip",
+]
