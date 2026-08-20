@@ -20,6 +20,7 @@ linters:
     - decorder  # Don't care about this
     - err113  # Not everything needs this
     - exhaustruct  # This is just a bad idea
+    - exhaustruct_v5  # Still a bad idea on v5
     - forbidigo  # Nothing to forbid
     - funlen  # Bad metric for complexity
     - gochecknoglobals  # Use common sense
