@@ -1,29 +1,51 @@
+{ inputs, ... }:
+let
+  version = "0.1.0";
+  rev = inputs.self.rev or inputs.self.dirtyRev or "unknown";
+in
 {
-  description = "A custom CI -> AWS auth mechanism powering my personal software catalog";
+  perSystem =
+    {
+      pkgs,
+      lib,
+      self',
+      ...
+    }:
+    {
+      packages.default = pkgs.buildGoModule {
+        meta = {
+          description = "A custom CI -> AWS auth mechanism powering my personal software catalog";
+          homepage = "https://github.com/FollowTheProcess/gatekeeper";
+          license = lib.licenses.mit;
+          platforms = lib.platforms.unix;
+          mainProgram = "gatekeeper";
+        };
 
-  inputs = {
-    nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    import-tree.url = "github:vic/import-tree";
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+        pname = "gatekeeper";
+        inherit version;
+        src = lib.sources.cleanSource inputs.self;
+        vendorHash = "sha256-vrFnW2ZCilfE01j5Y/LsCgRKy2UH9C/LaWFN2aPLj00=";
+        ldflags = [
+          "-s"
+          "-w"
+          "-X go.followtheprocess.codes/gatekeeper/internal/cmd.version=${version}"
+          "-X go.followtheprocess.codes/gatekeeper/internal/cmd.commit=${rev}"
+          "-X go.followtheprocess.codes/gatekeeper/internal/cmd.date=${inputs.self.lastModifiedDate}"
+        ];
+        subPackages = [ "cmd/gatekeeper" ];
 
-  outputs =
-    inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [
-        inputs.treefmt-nix.flakeModule
-        (inputs.import-tree ./nix)
-      ];
+        env = {
+          CGO_ENABLED = 0;
+          GOEXPERIMENT = "jsonv2";
+        };
 
-      systems = [
-        "aarch64-linux"
-        "x86_64-linux"
-        "aarch64-darwin"
-        "x86_64-darwin"
-      ];
+        checkPhase = ''
+          runHook preCheck
+          CGO_ENABLED=1 go test -race ./...
+          runHook postCheck
+        '';
+      };
+
+      checks.gatekeeper = self'.packages.default;
     };
 }
