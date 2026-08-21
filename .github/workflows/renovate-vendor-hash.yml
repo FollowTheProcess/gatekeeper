@@ -37,7 +37,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         # Using the API here because GitHub will sign the commit
         run: |-
-          if git diff --quiet flake.nix; then
+          if git diff --quiet nix/gatekeeper.nix; then
             echo "No change to vendorHash"
             exit 0
           fi
