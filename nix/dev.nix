@@ -7,7 +7,7 @@ _: {
         golangci-lint
         gopls
         goreleaser
-        mise
+        just
         nix-update
         trivy
         typos

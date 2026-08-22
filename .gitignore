@@ -22,8 +22,8 @@
 !**/testdata/**/*.txt
 !**/testdata/**/*.txtar
 
-# Mise
-!mise.toml
+# Just
+!justfile
 
 # Git
 !/.gitattributes
