@@ -37,12 +37,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         # Using the API here because GitHub will sign the commit
         run: |-
-          if git diff --quiet flake.nix; then
+          if git diff --quiet nix/gatekeeper.nix; then
             echo "No change to vendorHash"
             exit 0
           fi
-          gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/flake.nix" \
+          gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/nix/gatekeeper.nix" \
             -f message="chore: update vendorHash" \
-            -f content="$(base64 -w0 flake.nix)" \
-            -f sha="$(git rev-parse HEAD:flake.nix)" \
+            -f content="$(base64 -w0 nix/gatekeeper.nix)" \
+            -f sha="$(git rev-parse HEAD:nix/gatekeeper.nix)" \
             -f branch="$GITHUB_HEAD_REF"
