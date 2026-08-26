@@ -24,7 +24,7 @@ in
         pname = "gatekeeper";
         inherit version;
         src = lib.sources.cleanSource inputs.self;
-        vendorHash = "sha256-Y9uIMUprneW28P7PC0NIjBE9nBENy+V2OACrB+UeUAc=";
+        vendorHash = "sha256-l4PZgB8bPJl3JPECFbxFCc7L67u2jgGN4Eto5FDZ9EY=";
         ldflags = [
           "-s"
           "-w"
