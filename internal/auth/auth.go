@@ -106,12 +106,12 @@ func ParseFromHeaders(ctx context.Context, headers map[string]string, fetcher Fe
 
 	// Check the token is sufficiently short lived
 	iss, err := token.Claims.GetIssuedAt()
-	if err != nil {
+	if err != nil || iss == nil {
 		return Token{}, fmt.Errorf("could not get iss claim from JWT: %w", err)
 	}
 
 	exp, err := token.Claims.GetExpirationTime()
-	if err != nil {
+	if err != nil || exp == nil {
 		return Token{}, fmt.Errorf("could not get exp claim from JWT: %w", err)
 	}
 

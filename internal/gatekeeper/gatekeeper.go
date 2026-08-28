@@ -183,7 +183,7 @@ func (g Gatekeeper) Auth(ctx context.Context, options AuthOptions) error {
 	start := time.Now()
 
 	response, err := g.client.Do(request)
-	if err != nil {
+	if err != nil || response == nil {
 		return fmt.Errorf("failed to execute http request: %w", err)
 	}
 	defer response.Body.Close()

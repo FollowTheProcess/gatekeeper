@@ -3,7 +3,7 @@ _: {
     devShells.default = pkgs.mkShell {
       packages = with pkgs; [
         aws-sam-cli
-        go
+        go_1_27
         golangci-lint
         gopls
         goreleaser
@@ -12,8 +12,6 @@ _: {
         trivy
         typos
       ];
-
-      GOEXPERIMENT = "jsonv2";
 
       shellHook = ''
         echo "👋 Welcome to the gatekeeper devShell!"

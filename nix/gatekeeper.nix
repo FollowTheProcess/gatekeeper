@@ -12,7 +12,7 @@ in
       ...
     }:
     {
-      packages.default = pkgs.buildGoModule {
+      packages.default = pkgs.buildGo127Module {
         meta = {
           description = "A custom CI -> AWS auth mechanism powering my personal software catalog";
           homepage = "https://github.com/FollowTheProcess/gatekeeper";
@@ -24,7 +24,7 @@ in
         pname = "gatekeeper";
         inherit version;
         src = lib.sources.cleanSource inputs.self;
-        vendorHash = "sha256-DDzPgvCGnG/ZO2ZweVcgUf9Lx6Oyfzhxktq4++W+hHg=";
+        vendorHash = "sha256-DEg3rxP0eyChO3L7OKv3QyP4dLuBkAlp3368EYv7iIY=";
         ldflags = [
           "-s"
           "-w"
@@ -32,11 +32,9 @@ in
           "-X go.followtheprocess.codes/gatekeeper/internal/cmd.commit=${rev}"
           "-X go.followtheprocess.codes/gatekeeper/internal/cmd.date=${inputs.self.lastModifiedDate}"
         ];
-        subPackages = [ "cmd/gatekeeper" ];
 
         env = {
           CGO_ENABLED = 0;
-          GOEXPERIMENT = "jsonv2";
         };
 
         checkPhase = ''
