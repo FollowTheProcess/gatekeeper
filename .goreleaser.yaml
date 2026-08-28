@@ -22,7 +22,6 @@ builds:
       - -X go.followtheprocess.codes/gatekeeper/internal/cmd.date={{ .CommitDate }}
     env:
       - CGO_ENABLED=0
-      - GOEXPERIMENT=jsonv2
     mod_timestamp: "{{ .CommitTimestamp }}"
     goos:
       - linux

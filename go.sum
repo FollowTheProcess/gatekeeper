@@ -83,8 +83,8 @@ go.followtheprocess.codes/log v1.2.2 h1:9AcUEU2dNOR7PyLnN6sIx80RGOlDIQ+HA9q58Yj6
 go.followtheprocess.codes/log v1.2.2/go.mod h1:8xIqxbeC0xOyeTuqFkf11ulmDSDgaSgwj7LEMdIhs3Q=
 go.followtheprocess.codes/msg v1.10.0 h1:0uMrQpmhIxWDL7p8hw6DQ0wMRcNmsE8Vi0zECeyhDT8=
 go.followtheprocess.codes/msg v1.10.0/go.mod h1:5bHWSD5Fxy0SsCepbIId3Y+UvPc1ct+43lwsg2ER33w=
-go.followtheprocess.codes/problem v1.1.0 h1:6/Yhv31EpBB7jOWQjQ8xOB/qSAHFqhThfjcbE6YWzcc=
-go.followtheprocess.codes/problem v1.1.0/go.mod h1:QbBd3dyLUlSpyohvWAJBfD2vdrY4BsZjYnoOxlcSrAQ=
+go.followtheprocess.codes/problem v1.2.0 h1:0cj8xrmeAEjsEtHUaw2J0mCh5pCGrLSddtD8TmgEyCg=
+go.followtheprocess.codes/problem v1.2.0/go.mod h1:0elPttmITNYEZw3/DFdaf5TgvwgWE6vhDA6w7eVj2Hg=
 go.followtheprocess.codes/snapshot v0.10.1 h1:GWNOdDxGtRiw0HVKnidhCHI0ymmZaaiHAARimyjNVU4=
 go.followtheprocess.codes/snapshot v0.10.1/go.mod h1:vCkJeHMLa4mOP451SrA9m+Ym5tumx66hXm318jAwf5Y=
 go.followtheprocess.codes/test v1.4.0 h1:LBZYn2MqOW20HLe1AJm3lMLplSWH+zycfC7mmS9NF2w=

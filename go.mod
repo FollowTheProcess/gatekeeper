@@ -14,7 +14,7 @@ require (
 	go.followtheprocess.codes/cli v0.21.1
 	go.followtheprocess.codes/log v1.2.2
 	go.followtheprocess.codes/msg v1.10.0
-	go.followtheprocess.codes/problem v1.1.0
+	go.followtheprocess.codes/problem v1.2.0
 	go.followtheprocess.codes/test v1.4.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-lambda-go/otellambda v0.71.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-lambda-go/otellambda/xrayconfig v0.71.0
